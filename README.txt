@@ -1,6 +1,6 @@
-Software is license under the terms of the GNU GPL V3.0 (http://www.gnu.org/copyleft/gpl.html)
+Software is license under the terms of the GNU Affero GPL V3.0 (http://www.gnu.org/licenses/agpl-3.0.html)
 
-Copyright André Roy 2013.
+Copyright DesignLibre 2013.
 
 Instructions:
 
