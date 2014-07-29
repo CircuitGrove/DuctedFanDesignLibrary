@@ -2,7 +2,7 @@
 #///////////////////////////////////////////////
 # 	
 #    Turbomachinery Design Library (Python/Blender)
-#    Copyright (C) 2013  DesignLibre
+#    Copyright (C) 2014  Circuit Grove
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    To contribute to the DesignLibre distribution, contact contrib@designlibre.com 
+#    To contribute to the Circuit Grove distribution, contact contrib@circuitgrove.com 
 #
 #//////////////////////////////////////////////
 # 	
@@ -27,7 +27,7 @@
 #
 #///////////////////////////////////////////////
 import sys
-sys.path.append("./") 
+sys.path.append("c:/users/andre/Desktop/archive/Mavrix_aircraft/Tools/DuctedFanDesignLibrary2") 
 sys.path.append("C:\Python33\Lib\site-packages")#We need access to NumPy/SciPy Python
 import bpy
 import math
@@ -35,8 +35,23 @@ import mathutils
 import DLUtils
 import EDFLibrary
 import TurboMachLib
+import PropLibrary
 
 
+class DrawProp(bpy.types.Operator):
+    bl_idname = "draw.prop"
+    bl_label = "Draw Propellor"
+
+    def execute(self, context):
+        
+        
+
+        PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
+        hubHeight=10,hubDia=10,axleDia=5,\
+		chordArray=[5,5,5,5],NACAArray=[[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2]],\
+        nspan=4,npts=50,nBlades=2)
+        
+        return {'FINISHED'}
  
 class DrawRotor(bpy.types.Operator):
     bl_idname = "draw.rotor"
@@ -339,9 +354,27 @@ class CustomPanel(bpy.types.Panel):
         row=layout.row()
         row.operator("draw.stator")
         
- 
+         ### STATOR ###
+        
+        row = layout.row()
+        row.label(text="Propellor Geometry")    
+        ###        
+        
+        row = layout.row()
+        row.prop(context.scene,"propName")
+        row = layout.row()
+        row.operator("draw.prop")
 
 def register():        
+
+###########
+## Prop Properties
+##########
+
+    bpy.types.Scene.propName = bpy.props.StringProperty(
+            name="Propellor Name",
+            description="Name to assign to the Propellor object and mesh",
+            default="Propellor")
 
 
 ########
@@ -584,6 +617,7 @@ def register():
         min=1e-6, 
         max=1000)
     
+    bpy.utils.register_class(DrawProp)
     bpy.utils.register_class(DrawRotor)
     bpy.utils.register_class(DrawStator)
     bpy.utils.register_class(DrawStage2D)
