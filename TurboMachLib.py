@@ -55,12 +55,14 @@ def NACA4Profile(camber=10,thickness=10,chord=50,npts=50):
     yl=[]
     verts = []
     
-    if(camber < 0.0 || camber > 100.0):
-        #Add error handling
-        
-    if(thickness < 0.0 || thickness > 100.0):
-        #Add error handling
-        
+    if(camber < 0.0 or camber > 100.0):
+        #error handling
+        print("Warning in TurboMachLib.NACA4Profile(): Camber must be between 0 and 100 and represents a percentage.")
+        camber = 0.0 #choosing a default
+    if(thickness < 0.0 or thickness > 100.0):
+        #error handling
+        print("Warning in TurboMachLib.NACA4Profile(): thickness must be between 0 and 100 and represents a percentage.")
+        thickness = 10 #choosing a default
         
     m= camber/100
     t=thickness/100
@@ -84,11 +86,11 @@ def NACA4Profile(camber=10,thickness=10,chord=50,npts=50):
         xl.append(x[i] + yt[i]*(math.sin(math.atan(dycdx))))
         yl.append(yc[i] - yt[i]*(math.cos(math.atan(dycdx))))
 
-    #Create a contiguous array of vertices for output    
+    #Create a contiguous array of vertices for output and scale the chord.   
     for i in range(0,npts):
-        verts.append((xu[i],yu[i],0.0))
+        verts.append([xu[i]*chord,yu[i]*chord,0.0])
     for i in range(0,npts):
-        verts.append((xl[i],yl[i],0.0))
+        verts.append([xl[i]*chord,yl[i]*chord,0.0])
     	
     return verts
     

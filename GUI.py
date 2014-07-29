@@ -27,7 +27,7 @@
 #
 #///////////////////////////////////////////////
 import sys
-sys.path.append("c:/users/andre/Desktop/archive/Mavrix_aircraft/Tools/DuctedFanDesignLibrary2") 
+sys.path.append("c:/users/andre/Desktop/archive/Mavrix_aircraft/Tools/DuctedFanDesignLibrary") 
 sys.path.append("C:\Python33\Lib\site-packages")#We need access to NumPy/SciPy Python
 import bpy
 import math
@@ -49,7 +49,7 @@ class DrawProp(bpy.types.Operator):
         PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
         hubHeight=10,hubDia=10,axleDia=5,\
 		chordArray=[5,5,5,5],NACAArray=[[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2]],\
-        nspan=4,npts=50,nBlades=2)
+        nspan=10,npts=50,nBlades=2)
         
         return {'FINISHED'}
  
