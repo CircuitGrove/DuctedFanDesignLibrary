@@ -32,7 +32,7 @@ import math
 import DLUtils
 import mathutils
 
-def NACA4Profile(camber=10,thickness=10,chord=50,npts=50):
+def NACA4Profile(camber=10,thickness=10,camberPos=30,chord=50,npts=50):
 
     #//////////////////////
     #   This function creates the vertices in 2D of a NACA4 airfoil profile.
@@ -66,8 +66,11 @@ def NACA4Profile(camber=10,thickness=10,chord=50,npts=50):
         
     m= camber/100
     t=thickness/100
-    p=0.3  #camber position
-       
+    p=camberPos/100  #camber position
+    
+    print(t)
+    print(m)
+    
     #Generate vertex coordinates for unmodified airfoil shape
     for i in range(0,npts+1):
       

@@ -44,11 +44,12 @@ class DrawProp(bpy.types.Operator):
 
     def execute(self, context):
         
-        
+        chordArray=[14,16,20,20,16,14,12,10,8,6,5]
+        NACAArray=[[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2]]
 
         PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
         hubHeight=10,hubDia=10,axleDia=5,\
-		chordArray=[5,5,5,5],NACAArray=[[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2]],\
+		chordArray=chordArray,NACAArray=NACAArray,\
         nspan=10,npts=50,nBlades=2)
         
         return {'FINISHED'}

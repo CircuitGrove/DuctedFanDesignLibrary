@@ -47,14 +47,18 @@ def Prop(propName,propDia,pitch,\
     origin=(0,0,0)
     centerOfTwist = [0,0]
     
+    #error check of inputs
+    if(len(chordArray) != nspan or len(NACAArray) != nspan):
+        print("The size of the array of chord lengths or the array of airfoil NACA digits does not match the number of span points used to define the blade geometry.")
+    
     #Delete any existing prop geoms
     DLUtils.DeleteMesh(propName)
-	
+	   
     #Generate Hub    
     bpy.ops.mesh.primitive_cylinder_add(vertices=res,radius=hubDia/2,depth=hubHeight,location=(0,0,0)) 
     cyl = bpy.data.objects["Cylinder"]
-    cyl.name = propName
-    cyl.data.name = propName
+    #cyl.name = propName
+    #cyl.data.name = propName
     bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
     
 	#Blade root will be at center of rotation, scale blade height by 
@@ -71,7 +75,7 @@ def Prop(propName,propDia,pitch,\
             twistAngle = math.atan(pitch/(2*math.pi*span))
         
         #get the airfoil profile vertices
-        tmpVerts = TurboMachLib.NACA4Profile(camber=0,thickness=10,chord=20,npts=50) 
+        tmpVerts = TurboMachLib.NACA4Profile(camber=NACAArray[i][0]*10,thickness=NACAArray[i][2]*10+NACAArray[i][3],camberPos=NACAArray[i][1]*10,chord=chordArray[i],npts=50) 
         
         centerOfTwist[0] = 20/2
         
@@ -83,7 +87,7 @@ def Prop(propName,propDia,pitch,\
            
             #Twist the airfoil vertices.  First we shift them to get the desired center of rotation.
             tmpVert[0] = tmpVerts[v][0]*math.cos(twistAngle) -tmpVerts[v][1]*math.sin(twistAngle)
-            tmpVert[1] = tmpVerts[v][0]*math.sin(twistAngle) +tmpVerts[1][1]*math.cos(twistAngle)
+            tmpVert[1] = tmpVerts[v][0]*math.sin(twistAngle) +tmpVerts[v][1]*math.cos(twistAngle)
             
             #shift all verts to their proper span location in Z
             tmpVert[2] = span
@@ -117,5 +121,5 @@ def Prop(propName,propDia,pitch,\
     
     #Create Blender object for the blade    
     blade = DLUtils.createMesh(propName, origin, verts, [], faces)
-    
+    bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,0.0,1.0))
     return
