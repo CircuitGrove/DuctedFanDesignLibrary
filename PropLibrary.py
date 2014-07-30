@@ -57,8 +57,9 @@ def Prop(propName,propDia,pitch,\
     #Generate Hub    
     bpy.ops.mesh.primitive_cylinder_add(vertices=res,radius=hubDia/2,depth=hubHeight,location=(0,0,0)) 
     cyl = bpy.data.objects["Cylinder"]
-    #cyl.name = propName
-    #cyl.data.name = propName
+    cyl.name = propName
+    cyl.data.name = propName
+    DLUtils.SelectOnly(propName)
     bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
     
 	#Blade root will be at center of rotation, scale blade height by 
@@ -119,7 +120,13 @@ def Prop(propName,propDia,pitch,\
         faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i+1,nPerStage*(nspan)+i+1))    
         faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i,nPerStage*(nspan)+npts+i+1))    
     
-    #Create Blender object for the blade    
-    blade = DLUtils.createMesh(propName, origin, verts, [], faces)
-    bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,0.0,1.0))
+    #Create Blender object for the blade
+    dAngle = 360.0/nBlades
+    print(dAngle)
+    for i in range(0,nBlades):
+        blade = DLUtils.createMesh("Blade_"+str(i), origin, verts, [], faces)
+        DLUtils.SelectOnly("Blade_"+str(i))
+        bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,0.0,1.0))
+        bpy.ops.transform.rotate(value=math.radians(dAngle)*i,axis=(1.0,0.0,0.0))
+        
     return
