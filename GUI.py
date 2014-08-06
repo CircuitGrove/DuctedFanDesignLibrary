@@ -53,7 +53,7 @@ class DrawProp(bpy.types.Operator):
         PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
         hubHeight=16,hubDia=20,axleDia=7,\
 		chordArray=chordArray,NACAArray=NACAArray,\
-        nspan=10,npts=50,nBlades=2)
+        nspan=10,npts=20,nBlades=2)
         
         return {'FINISHED'}
  

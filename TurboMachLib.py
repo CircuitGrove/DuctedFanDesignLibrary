@@ -67,13 +67,9 @@ def NACA4Profile(camber=10,thickness=10,camberPos=30,chord=50,npts=50):
     m= camber/100
     t=thickness/100
     p=camberPos/100  #camber position
-    
-    print(t)
-    print(m)
-    
+        
     #Generate vertex coordinates for unmodified airfoil shape
     for i in range(0,npts+1):
-      
         x.append(1-math.cos(i*(math.pi/2)/npts))
         yt.append(t/0.2*(0.2969*math.pow(x[i],0.5)-0.126*x[i]-0.3516*math.pow(x[i],2)+0.2843*math.pow(x[i],3) - 0.1015*math.pow(x[i],4)))
         if(x[i]<p):
@@ -92,8 +88,8 @@ def NACA4Profile(camber=10,thickness=10,camberPos=30,chord=50,npts=50):
     #Create a contiguous array of vertices for output and scale the chord.   
     for i in range(0,npts):
         verts.append([xu[i]*chord,yu[i]*chord,0.0])
-    for i in range(0,npts):
-        verts.append([xl[i]*chord,yl[i]*chord,0.0])
+    for i in range(0,npts-1):
+        verts.append([xl[i+1]*chord,yl[i+1]*chord,0.0])
     	
     return verts
     

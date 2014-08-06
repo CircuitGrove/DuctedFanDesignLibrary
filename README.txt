@@ -2,6 +2,12 @@ Software is license under the terms of the GNU Affero GPL V3.0 (http://www.gnu.o
 
 Copyright André Roy 2013.
 
+Dependencies:  
+
+-Blender 2.71
+-Python 3.4
+-SciPy (Python 3.4)
+
 Instructions:
 
 -Load blender

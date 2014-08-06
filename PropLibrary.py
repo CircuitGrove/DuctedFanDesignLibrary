@@ -33,6 +33,7 @@ import math
 import mathutils
 import DLUtils
 import TurboMachLib
+import time
 
 def Prop(propName,propDia,pitch,\
         hubHeight,hubDia,axleDia,\
@@ -62,9 +63,8 @@ def Prop(propName,propDia,pitch,\
     DLUtils.SelectOnly(propName)
     bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
     
-	#Blade root will be at center of rotation, scale blade height by 
-    #5% because we will be trimming the excess.
-    bladeHeight = propDia/2*1.05 
+	#Blade root will be at center of rotation.
+    bladeHeight = propDia/2 
  
     #Generate vertex coordinates with twist and scale along the span        
     dspan = bladeHeight/nspan
@@ -76,7 +76,7 @@ def Prop(propName,propDia,pitch,\
             twistAngle = math.atan(pitch/(2*math.pi*span))
         
         #get the airfoil profile vertices
-        tmpVerts = TurboMachLib.NACA4Profile(camber=NACAArray[i][0]*10,thickness=NACAArray[i][2]*10+NACAArray[i][3],camberPos=NACAArray[i][1]*10,chord=chordArray[i],npts=50) 
+        tmpVerts = TurboMachLib.NACA4Profile(camber=NACAArray[i][0]*10,thickness=NACAArray[i][2]*10+NACAArray[i][3],camberPos=NACAArray[i][1]*10,chord=chordArray[i],npts=npts) 
         
         centerOfTwist[0] = 20/2
         
@@ -91,42 +91,88 @@ def Prop(propName,propDia,pitch,\
             tmpVert[1] = tmpVerts[v][0]*math.sin(twistAngle) +tmpVerts[v][1]*math.cos(twistAngle)
             
             #shift all verts to their proper span location in Z
-            tmpVert[2] = span
+            tmpVert[2] = span+0.01*bladeHeight #Shift blade by 1% of blade height to prevent poor boolean ops
              
             #append the vert to the master vertex list
             verts.append((tmpVert[0],tmpVert[1],tmpVert[2]))
-            
+     
+
+    
+    
     #Generate Polies from vertex IDs
     #Bottom Cap
-    faces.append((0,1,npts+1))
-    for i in range(0,npts-1):
-        faces.append((i,i+1,npts+i+1))    
-        faces.append((i,npts+i+1,npts+i))    
-
+    faces.append((0,1,npts))
+    for i in range(1,npts-1):
+        faces.append((i,i+1,npts+i))    
+        faces.append((i,npts+i,npts+i-1))    
+    
     #Middle
-    nPerStage = npts*2
+    nPerStage = npts*2-1
     for j in range(0,nspan):
+        #Top Side
         for i in range(0,npts-1):
             faces.append((nPerStage*j+i,nPerStage*(j+1)+i,nPerStage*(j+1)+i+1))
             faces.append((nPerStage*j+i,nPerStage*(j+1)+i+1,nPerStage*j+i+1))
-        for i in range(0,npts-1):
-            faces.append((nPerStage*j+i+npts,nPerStage*(j+1)+i+1+npts,nPerStage*(j+1)+i+npts))
-            faces.append((nPerStage*j+i+npts,nPerStage*j+i+1+npts,nPerStage*(j+1)+i+1+npts))
-        faces.append((nPerStage*j+npts-1,nPerStage*(j+1)+npts-1,nPerStage*(j+1)+npts*2-1))
-        faces.append((nPerStage*j+npts-1,nPerStage*(j+1)+npts*2-1,nPerStage*(j)+npts*2-1))
+        
+        #First strip for bottom side (hooks to verts from top side)
+        faces.append((nPerStage*j,nPerStage*(j+1)+npts,nPerStage*(j+1)))
+        faces.append((nPerStage*j,nPerStage*j+npts,nPerStage*(j+1)+npts))
+    
+        #Rest of bottom side
+        for i in range(0,npts-2):
+            faces.append((nPerStage*j+i+npts,nPerStage*(j+1)+i+npts+1,nPerStage*(j+1)+i+npts))
+            faces.append((nPerStage*j+i+npts,nPerStage*j+i+npts+1,nPerStage*(j+1)+i+npts+1))
+        
+        #Back face
+        faces.append((nPerStage*j+npts-1,nPerStage*(j+1)+npts-1,nPerStage*(j+1)+npts*2-2))
+        faces.append((nPerStage*j+npts-1,nPerStage*(j+1)+npts*2-2,nPerStage*(j)+npts*2-2))
+    
     #Top Cap
-    faces.append((nPerStage*(nspan),nPerStage*(nspan)+1,nPerStage*(nspan)+npts+1))
-    for i in range(0,npts-1):
-        faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i+1,nPerStage*(nspan)+i+1))    
-        faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i,nPerStage*(nspan)+npts+i+1))    
+    faces.append((nPerStage*(nspan),nPerStage*(nspan)+1,nPerStage*(nspan)+npts))
+    for i in range(1,npts-2):
+        faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i,nPerStage*(nspan)+i+1))    
+        faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i-1,nPerStage*(nspan)+npts+i))    
+    
+ 
+
+    
+    print(faces)
+    print(len(verts))
+    
     
     #Create Blender object for the blade
     dAngle = 360.0/nBlades
-    print(dAngle)
+    
     for i in range(0,nBlades):
         blade = DLUtils.createMesh("Blade_"+str(i), origin, verts, [], faces)
         DLUtils.SelectOnly("Blade_"+str(i))
         bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,0.0,1.0))
         bpy.ops.transform.rotate(value=math.radians(dAngle)*i,axis=(1.0,0.0,0.0))
+        
+    #Union the blades to the hub
+    #for i in range(0,nBlades):
+        #print("Boolean: Blade_" +str(i))
+        #DLUtils.BooleanMesh(propName,"Blade_"+str(i),"UNION",True) 
+        
+    #trim the blades to hub height
+    #DLUtils.DrawBox("box", propDia,propDia,propDia)
+    #DLUtils.MoveObject("box",[propDia/2+hubHeight/2,0,0])
+    
+    #cut the axle hole   
+    #bpy.ops.mesh.primitive_cylinder_add(vertices=res,radius=axleDia/2,depth=hubHeight*2,location=(0,0,0)) 
+    #axle = bpy.data.objects["Cylinder"]
+    #axle.name = "hole"
+    #axle.data.name = "hole"
+    #DLUtils.SelectOnly(propName)
+    #bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
+    #DLUtils.BooleanMesh(propName,"hole",'DIFFERENCE',True)
+    
+   
+    
+    #trim the blades to the proper dia
+    
+    #done!
+    
+   
         
     return
