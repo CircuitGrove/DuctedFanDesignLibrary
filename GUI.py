@@ -37,25 +37,6 @@ import EDFLibrary
 import TurboMachLib
 import PropLibrary
 
-
-class DrawProp(bpy.types.Operator):
-    bl_idname = "draw.prop"
-    bl_label = "Draw Propellor"
-
-    def execute(self, context):
-        
-        #we need to pass in an array of the chord lengths at each span point
-        chordArray=[14,16,20,20,19,17.5,15.5,13,10.5,8,5]
-        
-        #We need to pass in an array of the NACA4 digits at each span point.
-        NACAArray=[[0,0,5,5],[0,0,4,5],[0,0,3,0],[0,0,1,5],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2]]
-
-        PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
-        hubHeight=16,hubDia=20,axleDia=7,\
-		chordArray=chordArray,NACAArray=NACAArray,\
-        nspan=10,npts=20,nBlades=2)
-        
-        return {'FINISHED'}
  
 class DrawRotor(bpy.types.Operator):
     bl_idname = "draw.rotor"
@@ -364,21 +345,10 @@ class CustomPanel(bpy.types.Panel):
         row.label(text="Propellor Geometry")    
         ###        
         
-        row = layout.row()
-        row.prop(context.scene,"propName")
-        row = layout.row()
-        row.operator("draw.prop")
+
 
 def register():        
 
-###########
-## Prop Properties
-##########
-
-    bpy.types.Scene.propName = bpy.props.StringProperty(
-            name="Propellor Name",
-            description="Name to assign to the Propellor object and mesh",
-            default="Propellor")
 
 
 ########
@@ -621,7 +591,6 @@ def register():
         min=1e-6, 
         max=1000)
     
-    bpy.utils.register_class(DrawProp)
     bpy.utils.register_class(DrawRotor)
     bpy.utils.register_class(DrawStator)
     bpy.utils.register_class(DrawStage2D)
