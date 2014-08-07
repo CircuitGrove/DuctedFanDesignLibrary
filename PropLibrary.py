@@ -55,9 +55,9 @@ def Prop(propName,propDia,pitch,\
     #Delete any existing prop geoms
     DLUtils.DeleteMesh(propName)
 	   
-    #Generate Hub    
-    bpy.ops.mesh.primitive_cylinder_add(vertices=res,radius=hubDia/2,depth=hubHeight,location=(0,0,0)) 
-    cyl = bpy.data.objects["Cylinder"]
+    #Generate Hub   
+    DLUtils.DrawCylinder("Hub",hubDia,0,hubHeight+0.001,res)#use a 0.001m tolerance which we'll trim off.
+    cyl = bpy.data.objects["Hub"]
     cyl.name = propName
     cyl.data.name = propName
     DLUtils.SelectOnly(propName)
@@ -133,39 +133,32 @@ def Prop(propName,propDia,pitch,\
         faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i,nPerStage*(nspan)+i+1))    
         faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i-1,nPerStage*(nspan)+npts+i))    
     
- 
-
-    
-    print(faces)
-    print(len(verts))
-    
-    
+     
     #Create Blender object for the blade
     dAngle = 360.0/nBlades
     
     for i in range(0,nBlades):
+        print("Draw Blade_" + str(i))
         blade = DLUtils.createMesh("Blade_"+str(i), origin, verts, [], faces)
         DLUtils.SelectOnly("Blade_"+str(i))
         bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,0.0,1.0))
         bpy.ops.transform.rotate(value=math.radians(dAngle)*i,axis=(1.0,0.0,0.0))
         
     #Union the blades to the hub
-    #for i in range(0,nBlades):
-        #print("Boolean: Blade_" +str(i))
-        #DLUtils.BooleanMesh(propName,"Blade_"+str(i),"UNION",True) 
+    for i in range(0,nBlades):
+        print("Union: Blade_" +str(i))
+        DLUtils.BooleanMesh(propName,"Blade_"+str(i),"UNION",True) 
         
     #trim the blades to hub height
-    #DLUtils.DrawBox("box", propDia,propDia,propDia)
-    #DLUtils.MoveObject("box",[propDia/2+hubHeight/2,0,0])
+    DLUtils.DrawBox("box", propDia,propDia,propDia)
+    DLUtils.MoveObject("box",[propDia/2+hubHeight/2,0,0])
+    DLUtils.BooleanMesh(propName,"box","DIFFERENCE",True) 
     
     #cut the axle hole   
-    #bpy.ops.mesh.primitive_cylinder_add(vertices=res,radius=axleDia/2,depth=hubHeight*2,location=(0,0,0)) 
-    #axle = bpy.data.objects["Cylinder"]
-    #axle.name = "hole"
-    #axle.data.name = "hole"
-    #DLUtils.SelectOnly(propName)
-    #bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
-    #DLUtils.BooleanMesh(propName,"hole",'DIFFERENCE',True)
+    DLUtils.DrawCylinder("hole",axleDia,0,hubHeight*2,res)
+    DLUtils.SelectOnly("hole")
+    bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
+    DLUtils.BooleanMesh(propName,"hole",'DIFFERENCE',True)
     
    
     
