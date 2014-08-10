@@ -62,7 +62,7 @@ def Rotor(rotorName,hubDia,rotorDia,hubHeight,hubThickness,axleDia,\
         
         
         #Generate blade
-        TurboMachLib.NACA4("RotorBlade"+str(i),camber_root,camber_tip,camber_position,thickness,	bladeHeight, twistAngle,rootChord,tipChord,	centerOfTwist, nspan,npts)
+        TurboMachLib.NACA4Blade("RotorBlade"+str(i),camber_root,camber_tip,camber_position,thickness,	bladeHeight, twistAngle,rootChord,tipChord,	centerOfTwist, nspan,npts)
         
         #Grab the mesh
         me = bpy.data.meshes["RotorBlade"+str(i)]
@@ -234,7 +234,7 @@ def Stator(ductID=64,ductThickness=2,ductLength=60,res=64,\
          
     for i in range(0,nBlades):
         #Generate blade
-        TurboMachLib.NACA4(bladeName+str(i),camberRoot, camberTip,camber_position,bladeThickness,	bladeHeight, twistAngle,rootChord,tipChord,	centerOfTwist, nspan,npts)
+        TurboMachLib.NACA4Blade(bladeName+str(i),camberRoot, camberTip,camber_position,bladeThickness,	bladeHeight, twistAngle,rootChord,tipChord,	centerOfTwist, nspan,npts)
         
         #Grab the mesh
         me = bpy.data.meshes[bladeName+str(i)]

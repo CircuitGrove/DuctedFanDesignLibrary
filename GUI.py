@@ -2,7 +2,7 @@
 #///////////////////////////////////////////////
 # 	
 #    Turbomachinery Design Library (Python/Blender)
-#    Copyright (C) 2013  DesignLibre
+#    Copyright (C) 2014  Circuit Grove
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    To contribute to the DesignLibre distribution, contact contrib@designlibre.com 
+#    To contribute to the Circuit Grove distribution, contact contrib@circuitgrove.com 
 #
 #//////////////////////////////////////////////
 # 	
@@ -27,7 +27,7 @@
 #
 #///////////////////////////////////////////////
 import sys
-sys.path.append("./") 
+sys.path.append("c:/users/andre/Desktop/archive/Mavrix_aircraft/Tools/DuctedFanDesignLibrary") 
 sys.path.append("C:\Python33\Lib\site-packages")#We need access to NumPy/SciPy Python
 import bpy
 import math
@@ -35,7 +35,7 @@ import mathutils
 import DLUtils
 import EDFLibrary
 import TurboMachLib
-
+import PropLibrary
 
  
 class DrawRotor(bpy.types.Operator):
@@ -339,9 +339,16 @@ class CustomPanel(bpy.types.Panel):
         row=layout.row()
         row.operator("draw.stator")
         
- 
+         ### STATOR ###
+        
+        row = layout.row()
+        row.label(text="Propellor Geometry")    
+        ###        
+        
+
 
 def register():        
+
 
 
 ########

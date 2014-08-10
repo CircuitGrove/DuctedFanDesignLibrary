@@ -95,12 +95,8 @@ def RotateObject(name,deltaOrientation):
     bpy.data.objects[name].delta_rotation_euler.z += deltaOrientation.z
 def BooleanMesh(name1,name2,boolType,boolDel2):
     
-    #Deselect All
-    bpy.ops.object.select_all(action='DESELECT')
-            
-    #grab object 1 and select it
-    obj1 = bpy.data.objects[name1]
-    bpy.context.scene.objects.active=obj1
+    #Select name1
+    SelectOnly(name1)
     
     #Boolean the two  
     bpy.ops.object.modifier_add(type='BOOLEAN')
