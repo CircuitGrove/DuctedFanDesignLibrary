@@ -43,13 +43,13 @@ class DrawProp(bpy.types.Operator):
     def execute(self, context):
         
         #we need to pass in an array of the chord lengths at each span point
-        chordArray=[14,16,20,20,19,17.5,15.5,13,10.5,8,5]
+        chordArray=[11,12,15.6,16,14,12.5,10.4,9.4,8.4,7.4,6]
         
         #We need to pass in an array of the NACA4 digits at each span point.
-        NACAArray=[[0,0,5,5],[0,0,4,5],[0,0,3,0],[0,0,1,5],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2]]
+        NACAArray=[[2,4,5,5],[2,4,4,5],[2,4,3,0],[2,4,1,5],[2,4,1,2],[2,4,1,2],[2,4,1,2],[2,4,1,2],[2,4,1,2],[2,4,1,2],[2,4,1,2]]
 
-        PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
-        hubHeight=16,hubDia=20,axleDia=7,\
+        PropLibrary.Prop(propName="test",propDia=6*25.4,pitch=4*25.4,\
+        hubHeight=12,hubDia=13,axleDia=5.0,\
 		chordArray=chordArray,NACAArray=NACAArray,\
         nspan=10,npts=20,nBlades=2)
         

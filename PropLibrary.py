@@ -76,20 +76,22 @@ def Prop(propName,propDia,pitch,\
             twistAngle = math.atan(pitch/(2*math.pi*span))
         
         #get the airfoil profile vertices
-        tmpVerts = TurboMachLib.NACA4Profile(camber=NACAArray[i][0]*10,thickness=NACAArray[i][2]*10+NACAArray[i][3],camberPos=NACAArray[i][1]*10,chord=chordArray[i],npts=npts) 
+        tmpVerts = TurboMachLib.NACA4Profile(camber=NACAArray[i][0],thickness=NACAArray[i][2]*10+NACAArray[i][3],camberPos=NACAArray[i][1]*10,chord=chordArray[i],npts=npts) 
         
-        centerOfTwist[0] = 20/2
+        centerOfTwist[0] = chordArray[i]/2
         
         for v in range(0,len(tmpVerts)):
             
             #shift all verts for twisting
             tmpVerts[v][0] -= centerOfTwist[0]
             tmpVerts[v][1] -= centerOfTwist[1]
-           
+            
+                       
             #Twist the airfoil vertices.  First we shift them to get the desired center of rotation.
             tmpVert[0] = tmpVerts[v][0]*math.cos(twistAngle) -tmpVerts[v][1]*math.sin(twistAngle)
             tmpVert[1] = tmpVerts[v][0]*math.sin(twistAngle) +tmpVerts[v][1]*math.cos(twistAngle)
             
+                        
             #shift all verts to their proper span location in Z
             tmpVert[2] = span+0.01*bladeHeight #Shift blade by 1% of blade height to prevent poor boolean ops
              
@@ -129,7 +131,7 @@ def Prop(propName,propDia,pitch,\
     
     #Top Cap
     faces.append((nPerStage*(nspan),nPerStage*(nspan)+1,nPerStage*(nspan)+npts))
-    for i in range(1,npts-2):
+    for i in range(1,npts-1):
         faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i,nPerStage*(nspan)+i+1))    
         faces.append((nPerStage*(nspan)+i,nPerStage*(nspan)+npts+i-1,nPerStage*(nspan)+npts+i))    
     
@@ -142,7 +144,7 @@ def Prop(propName,propDia,pitch,\
         blade = DLUtils.createMesh("Blade_"+str(i), origin, verts, [], faces)
         DLUtils.SelectOnly("Blade_"+str(i))
         bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,0.0,1.0))
-        bpy.ops.transform.rotate(value=math.radians(dAngle)*i,axis=(1.0,0.0,0.0))
+        bpy.ops.transform.rotate(value=math.radians(270)-math.radians(dAngle)*i,axis=(1.0,0.0,0.0))
         
     #Union the blades to the hub
     for i in range(0,nBlades):
