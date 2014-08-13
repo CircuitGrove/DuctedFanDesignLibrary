@@ -27,8 +27,10 @@
 #///////////////////////////////////////////////
 
 import sys
-sys.path.append("c:/users/andre/Desktop/archive/Mavrix_aircraft/Tools/DuctedFanDesignLibrary") #We need to instruct Blender about where the library files are
-sys.path.append("C:\Python33\Lib\site-packages")#We need access to NumPy/SciPy Python
+#We need to instruct Blender about where the library files are
+sys.path.append("c:/users/andre/Desktop/archive/Mavrix_aircraft/Tools/DuctedFanDesignLibrary") 
+#We need access to NumPy/SciPy Python
+sys.path.append("C:\Python33\Lib\site-packages")
 import bpy
 import math
 import mathutils
