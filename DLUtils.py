@@ -33,6 +33,10 @@ import mathutils
 import scipy.spatial
 import numpy
 
+def interp1d(x1,x2,y1,y2,x):
+
+    return y1-((y1-y2)/(x1-x2))*(x1-x) 
+    
 def DeleteMesh(name):
     
     if name in bpy.data.objects:        

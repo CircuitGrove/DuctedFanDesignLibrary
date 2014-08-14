@@ -62,16 +62,23 @@ def Prop(propName,propDia,pitch,\
     cyl.data.name = propName
     DLUtils.SelectOnly(propName)
     bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
+    hubOffset=0
+    bpy.ops.transform.translate(value=(hubOffset,0,0))
     
 	#Blade root will be at center of rotation.
     bladeHeight = propDia/2 
  
     #Generate vertex coordinates with twist and scale along the span        
     dspan = bladeHeight/nspan
+    
+    spanStart = propDia/6
+    
     for i in range(0,nspan+1): 
         span = i*dspan
-        if(span == 0):
-            twistAngle = math.pi/2
+        
+        if(span < spanStart):
+            startAngle = math.atan(pitch/(2*math.pi*spanStart));
+            twistAngle = DLUtils.interp1d(0,spanStart,0,startAngle,span)
         else:
             twistAngle = math.atan(pitch/(2*math.pi*span))
         
@@ -91,7 +98,7 @@ def Prop(propName,propDia,pitch,\
             tmpVert[0] = tmpVerts[v][0]*math.cos(twistAngle) -tmpVerts[v][1]*math.sin(twistAngle)
             tmpVert[1] = tmpVerts[v][0]*math.sin(twistAngle) +tmpVerts[v][1]*math.cos(twistAngle)
             
-                        
+            
             #shift all verts to their proper span location in Z
             tmpVert[2] = span+0.01*bladeHeight #Shift blade by 1% of blade height to prevent poor boolean ops
              
@@ -152,9 +159,9 @@ def Prop(propName,propDia,pitch,\
         DLUtils.BooleanMesh(propName,"Blade_"+str(i),"UNION",True) 
         
     #trim the blades to hub height
-    DLUtils.DrawBox("box", propDia,propDia,propDia)
-    DLUtils.MoveObject("box",[propDia/2+hubHeight/2,0,0])
-    DLUtils.BooleanMesh(propName,"box","DIFFERENCE",True) 
+    #DLUtils.DrawBox("box", propDia,propDia,propDia)
+    #DLUtils.MoveObject("box",[propDia/2+hubHeight/2,0,0])
+    #DLUtils.BooleanMesh(propName,"box","DIFFERENCE",True) 
     
     #cut the axle hole   
     DLUtils.DrawCylinder("hole",axleDia,0,hubHeight*2,res)
