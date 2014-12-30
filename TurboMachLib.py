@@ -81,9 +81,9 @@ def NACA4Profile(camber=10,thickness=10,camberPos=30,chord=50,npts=50):
 			
 			
         xu.append(x[i] - yt[i]*(math.sin(math.atan(dycdx))))
-        yu.append(yc[i] + yt[i]*(math.cos(math.atan(dycdx))))
+        yu.append(-yc[i] + yt[i]*(math.cos(math.atan(dycdx))))
         xl.append(x[i] + yt[i]*(math.sin(math.atan(dycdx))))
-        yl.append(yc[i] - yt[i]*(math.cos(math.atan(dycdx))))
+        yl.append(-yc[i] - yt[i]*(math.cos(math.atan(dycdx))))
 
     #Create a contiguous array of vertices for output and scale the chord.   
     for i in range(0,npts):
