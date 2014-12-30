@@ -37,16 +37,51 @@ import time
 
 def Prop(propName,propDia,pitch,\
         hubHeight,hubDia,axleDia,\
-		chordArray,NACAArray,\
+		rootChord,rootCPPos,rootCPStrength,\
+        tipChord,tipCPPos,tipCPStrength,\
+        rootSkew,rootCPSkew, tipCPSkew, tipSkew,\
         nspan,npts,nBlades):
 		
-    res = 64
+    res = 64  #used to define cylinder resolution.
+    bladeTransition = hubDia #where the blade begins from the structural blade root.
+    
+    #initialising arrays we'll need.
     verts = []
     tmpVerts = []
     tmpVert = [0,0,0]
     faces = []
     origin=(0,0,0)
     centerOfTwist = [0,0]
+    
+    #An array of the chord lengths at each span point
+    chordArray = []
+    #An array of the NACA4 digits at each span point.
+    NACAArray = []
+    sPos = []
+   
+    #Blade root will be at center of rotation.
+    bladeHeight = propDia/2 
+    blendLen = bladeHeight - bladeTransition
+    dSpan = bladeHeight/nspan
+    for i in range(0,nspan+1):
+
+        span = i*dSpan
+        
+        if(span < bladeTransition):
+            #transition the chord length from hub height to root chord    
+            chordArray.append(hubHeight + span/bladeTransition*(rootChord-hubHeight))
+            NACAArray.append([0,0,3,5])
+            sPos.append(span)
+        else:
+            t = i/(nspan-1)
+            tm1 = 1-t
+            chord = pow(tm1,3)*rootChord + 3*pow(tm1,2)*t*rootChord*rootCPStrength + 3*tm1*pow(t,2)*tipChord*tipCPStrength + pow(t,3)*tipChord
+            s = pow(tm1,3)*0 + 3*pow(tm1,2)*t*rootCPPos*blendLen + 3*tm1*pow(t,2)*tipCPPos*blendLen + pow(t,3)*blendLen
+            sPos.append(bladeTransition+s)
+            chordArray.append(chord)
+            NACAArray.append([0,0,1,5])
+        
+   
     
     #error check of inputs
     if(len(chordArray) != nspan or len(NACAArray) != nspan):
@@ -56,24 +91,26 @@ def Prop(propName,propDia,pitch,\
     DLUtils.DeleteMesh(propName)
 	   
     #Generate Hub   
-    DLUtils.DrawCylinder("Hub",hubDia,0,hubHeight+0.001,res)#use a 0.001m tolerance which we'll trim off.
+    DLUtils.DrawCylinder("Hub",hubDia,0,hubHeight,res)#use a 0.001m tolerance which we'll trim off.
     cyl = bpy.data.objects["Hub"]
     cyl.name = propName
     cyl.data.name = propName
     DLUtils.SelectOnly(propName)
     bpy.ops.transform.rotate(value=math.radians(90),axis=(0.0,1.0,0.0))
+    DLUtils.MoveObject(propName,[2.0,0,0])
     
-	#Blade root will be at center of rotation.
-    bladeHeight = propDia/2 
+	
  
     #Generate vertex coordinates with twist and scale along the span        
-    dspan = bladeHeight/nspan
     for i in range(0,nspan+1): 
-        span = i*dspan
+        span = sPos[i] #i*dSpan
         if(span == 0):
-            twistAngle = math.pi/2
+            twistAngle = 0
+        elif(span < bladeTransition):
+             twistAngle = math.atan(pitch/(2*math.pi*span))*span/bladeTransition
         else:
             twistAngle = math.atan(pitch/(2*math.pi*span))
+        print(twistAngle)
         
         #get the airfoil profile vertices
         tmpVerts = TurboMachLib.NACA4Profile(camber=NACAArray[i][0]*10,thickness=NACAArray[i][2]*10+NACAArray[i][3],camberPos=NACAArray[i][1]*10,chord=chordArray[i],npts=npts) 
@@ -151,7 +188,7 @@ def Prop(propName,propDia,pitch,\
         
     #trim the blades to hub height
     DLUtils.DrawBox("box", propDia,propDia,propDia)
-    DLUtils.MoveObject("box",[propDia/2+hubHeight/2,0,0])
+    DLUtils.MoveObject("box",[propDia/2+hubHeight/2+0.001,0,0])
     DLUtils.BooleanMesh(propName,"box","DIFFERENCE",True) 
     
     #cut the axle hole   

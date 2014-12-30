@@ -42,16 +42,25 @@ class DrawProp(bpy.types.Operator):
 
     def execute(self, context):
         
-        #we need to pass in an array of the chord lengths at each span point
-        chordArray=[14,16,20,20,19,17.5,15.5,13,10.5,8,5]
         
-        #We need to pass in an array of the NACA4 digits at each span point.
-        NACAArray=[[0,0,5,5],[0,0,4,5],[0,0,3,0],[0,0,1,5],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2],[0,0,1,2]]
+        
+        rootChord = 15 #root chord
+        tipChord = 10 #tip chord        
+        rootCPPos = 0.1 #Root control point position (@ root =0.0, @ tip = 1.0)
+        tipCPPos = 0.9 #Tip control point position (@ root =0.0, @ tip = 1.0)
+        rootCPStrength = 2.5 # root chord multiplier
+        tipCPStrength =  0.8 # tip chord multiplier
+        rootSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
+        rootCPSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
+        tipCPSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
+        tipSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
 
         PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
         hubHeight=16,hubDia=20,axleDia=7,\
-		chordArray=chordArray,NACAArray=NACAArray,\
-        nspan=10,npts=20,nBlades=2)
+		rootChord=rootChord,rootCPPos=rootCPPos,rootCPStrength=rootCPStrength,\
+        tipChord=tipChord,tipCPPos=tipCPPos,tipCPStrength=tipCPStrength,\
+        rootSkew=rootSkew,rootCPSkew=rootCPSkew, tipCPSkew=tipCPSkew, tipSkew=tipSkew,\
+        nspan=10,npts=20,nBlades=3)
         
         return {'FINISHED'}
         
@@ -94,3 +103,4 @@ def unregister():
  
 if __name__ == "__main__":
     register()       
+
