@@ -64,26 +64,29 @@ def NACA4Profile(camber=10,thickness=10,camberPos=30,chord=50,npts=50):
         print("Warning in TurboMachLib.NACA4Profile(): thickness must be between 0 and 100 and represents a percentage.")
         thickness = 10 #choosing a default
         
-    m= camber/100
+    m=camber/100
     t=thickness/100
     p=camberPos/100  #camber position
+
         
     #Generate vertex coordinates for unmodified airfoil shape
     for i in range(0,npts+1):
         x.append(1-math.cos(i*(math.pi/2)/npts))
-        yt.append(t/0.2*(0.2969*math.pow(x[i],0.5)-0.126*x[i]-0.3516*math.pow(x[i],2)+0.2843*math.pow(x[i],3) - 0.1015*math.pow(x[i],4)))
+        yt.append(t*5*(0.2969*math.pow(x[i],0.5)-0.126*x[i]-0.3516*math.pow(x[i],2)+0.2843*math.pow(x[i],3) - 0.1015*math.pow(x[i],4)))
         if(x[i]<p):
-            yc.append(m/pow(p,2)*(2*p*x[i] - pow(x[i],2)))
+            yc.append(m*x[i]/pow(p,2)*(2*p - x[i]))
             dycdx = 2*m/pow(p,2)*(p-x[i])
         else: 
-            yc.append(m/pow(1-p,2)*(1 - 2*p + 2*p*x[i] - pow(x[i],2)))
+            yc.append(m*(1-x[i])/pow(1-p,2)*(1 - 2*p + x[i]))
             dycdx = 2*m/pow(1-p,2)*(p-x[i])
 			
-			
-        xu.append(x[i] - yt[i]*(math.sin(math.atan(dycdx))))
-        yu.append(-yc[i] + yt[i]*(math.cos(math.atan(dycdx))))
-        xl.append(x[i] + yt[i]*(math.sin(math.atan(dycdx))))
-        yl.append(-yc[i] - yt[i]*(math.cos(math.atan(dycdx))))
+        theta = math.atan(dycdx)	
+        xu.append(x[i] - yt[i]*(math.sin(theta)))
+        xl.append(x[i] + yt[i]*(math.sin(theta)))
+        yu.append(-yc[i] + yt[i]*(math.cos(theta)))
+        yl.append(-yc[i] - yt[i]*(math.cos(theta)))
+        
+       
 
     #Create a contiguous array of vertices for output and scale the chord.   
     for i in range(0,npts):

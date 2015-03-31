@@ -43,24 +43,16 @@ class DrawProp(bpy.types.Operator):
     def execute(self, context):
         
         
+       
         
-        rootChord = 15 #root chord
-        tipChord = 10 #tip chord        
-        rootCPPos = 0.1 #Root control point position (@ root =0.0, @ tip = 1.0)
-        tipCPPos = 0.9 #Tip control point position (@ root =0.0, @ tip = 1.0)
-        rootCPStrength = 2.5 # root chord multiplier
-        tipCPStrength =  0.8 # tip chord multiplier
-        rootSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
-        rootCPSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
-        tipCPSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
-        tipSkew = 0.5 #Shifts the airfoil forward or back, 0.5 is neutral
-
-        PropLibrary.Prop(propName="test",propDia=9*25.4,pitch=6*25.4,\
-        hubHeight=16,hubDia=20,axleDia=7,\
-		rootChord=rootChord,rootCPPos=rootCPPos,rootCPStrength=rootCPStrength,\
-        tipChord=tipChord,tipCPPos=tipCPPos,tipCPStrength=tipCPStrength,\
-        rootSkew=rootSkew,rootCPSkew=rootCPSkew, tipCPSkew=tipCPSkew, tipSkew=tipSkew,\
-        nspan=10,npts=20,nBlades=3)
+        propellerProps = PropLibrary.PropellerProps()
+       
+        propellerProps.Standard()
+        
+        PropLibrary.Propeller(propName="test",propDia=7*25.4,pitch=4*25.4,\
+        hubHeight=8.5,hubDia=13,axleDia=5.2,\
+		PropellerProps=propellerProps,\
+        bladeTransition=30,nspan=20,npts=20,nBlades=2)
         
         return {'FINISHED'}
         
@@ -103,4 +95,6 @@ def unregister():
  
 if __name__ == "__main__":
     register()       
+
+
 
